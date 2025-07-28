@@ -27,7 +27,7 @@
       box-shadow: 0 0 15px rgba(255, 0, 0, 0.4);
       width: 100%;
       max-width: 400px;
-      transition: all 0.3s ease-in-out;
+      overflow: hidden;
     }
 
     h1 {
@@ -74,10 +74,33 @@
     .step {
       display: none;
       flex-direction: column;
+      animation: fadeIn 0.4s ease forwards;
     }
 
     .step.active {
       display: flex;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @media (max-width: 480px) {
+      h1 {
+        font-size: 1.5rem;
+      }
+
+      input, button {
+        font-size: 0.95rem;
+        padding: 12px;
+      }
     }
   </style>
 </head>
@@ -105,7 +128,6 @@
     const steps = document.querySelectorAll('.step');
     const form = document.getElementById('waitlist-form');
     const successMsg = document.getElementById('successMsg');
-
     const scriptURL = 'https://script.google.com/macros/s/PASTE_YOUR_SCRIPT_URL_HERE/exec';
 
     function nextStep(current) {
