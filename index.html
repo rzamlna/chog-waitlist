@@ -6,9 +6,7 @@
   <title>chogdotfun – Waitlist</title>
   <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@600&display=swap" rel="stylesheet">
   <style>
-    * {
-      box-sizing: border-box;
-    }
+    * { box-sizing: border-box; }
 
     body {
       font-family: 'Rubik', sans-serif;
@@ -29,6 +27,7 @@
       box-shadow: 0 0 15px rgba(255, 0, 0, 0.4);
       width: 100%;
       max-width: 400px;
+      transition: all 0.3s ease-in-out;
     }
 
     h1 {
@@ -38,7 +37,7 @@
       font-size: 1.8rem;
     }
 
-    input, button, a.share {
+    input, button {
       width: 100%;
       padding: 14px;
       margin: 10px 0;
@@ -64,21 +63,6 @@
       background-color: #ff0000;
     }
 
-    .share {
-      display: block;
-      text-align: center;
-      text-decoration: none;
-      background-color: #660000;
-      color: #fff;
-      font-weight: bold;
-      margin-top: 14px;
-      transition: 0.2s;
-    }
-
-    .share:hover {
-      background-color: #990000;
-    }
-
     .success {
       margin-top: 14px;
       color: #00ffb3;
@@ -87,15 +71,13 @@
       display: none;
     }
 
-    @media (max-width: 480px) {
-      h1 {
-        font-size: 1.5rem;
-      }
+    .step {
+      display: none;
+      flex-direction: column;
+    }
 
-      input, button, a.share {
-        font-size: 0.95rem;
-        padding: 12px;
-      }
+    .step.active {
+      display: flex;
     }
   </style>
 </head>
@@ -103,18 +85,33 @@
   <div class="container">
     <h1>Join chogdotfun 🚀</h1>
     <form id="waitlist-form">
-      <input type="email" name="email" placeholder="Your Email Address" required />
-      <input type="text" name="wallet" placeholder="Your Wallet Address" required />
-      <button type="submit">Join Waitlist</button>
+      <div class="step active" id="step1">
+        <input type="email" name="email" placeholder="Your Email Address" required />
+        <button type="button" onclick="nextStep(1)">Next</button>
+      </div>
+      <div class="step" id="step2">
+        <input type="text" name="username" placeholder="Farcaster Username" required />
+        <button type="button" onclick="nextStep(2)">Next</button>
+      </div>
+      <div class="step" id="step3">
+        <input type="text" name="wallet" placeholder="Farcaster Wallet Address" required />
+        <button type="submit">Join Waitlist</button>
+      </div>
     </form>
-    <a class="share" href="https://warpcast.com/~/compose?text=I just joined the waitlist for chogdotfun 🚀%0Ahttps://chogdotfun.vercel.app" target="_blank">Share on Farcaster</a>
     <div class="success" id="successMsg">🚀 You're on the list!</div>
   </div>
 
   <script>
-    const scriptURL = 'https://script.google.com/macros/s/PASTE_YOUR_SCRIPT_URL_HERE/exec';
+    const steps = document.querySelectorAll('.step');
     const form = document.getElementById('waitlist-form');
     const successMsg = document.getElementById('successMsg');
+
+    const scriptURL = 'https://script.google.com/macros/s/PASTE_YOUR_SCRIPT_URL_HERE/exec';
+
+    function nextStep(current) {
+      steps[current - 1].classList.remove('active');
+      steps[current].classList.add('active');
+    }
 
     form.addEventListener('submit', e => {
       e.preventDefault();
@@ -122,8 +119,10 @@
         method: 'POST',
         body: new FormData(form)
       })
-      .then(response => {
+      .then(() => {
         form.reset();
+        steps.forEach(step => step.classList.remove('active'));
+        steps[0].classList.add('active');
         successMsg.style.display = 'block';
       })
       .catch(error => {
